@@ -10,6 +10,21 @@ EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 RECIPIENT_EMAILS = os.getenv("RECIPIENT_EMAILS").split(",")
 
+def mask_email(email):
+    email = email.strip()
+    try:
+        local, domain = email.split("@", 1)
+    except ValueError:
+        return "***"
+    masked_local = local[:2] + "*" * max(len(local) - 2, 1)
+
+    try:
+        domain_name, ext = domain.rsplit(".", 1)
+    except ValueError:
+        return f"{masked_local}@***"
+    masked_domain = domain_name[:1] + "*" * max(len(domain_name) - 1, 1)
+    return f"{masked_local}@{masked_domain}.{ext}"
+
 def fetch_random_quote():
     try:
         conn = http.client.HTTPSConnection("quotes15.p.rapidapi.com")
@@ -62,7 +77,7 @@ def send_email(quote):
                 server.starttls()
                 server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
                 server.send_message(msg)
-                print(f"Email sent successfully to {recipient}.")
+                print(f"Email sent successfully to {mask_email(recipient)}.")
                 
     except Exception as e:
         print(f"Failed to send email: {str(e)}")

@@ -2,7 +2,7 @@ name: Send Daily Quote Email (CET)
 
 on:
   schedule:
-    - cron: '38 4 * 10 1-5'
+    - cron: '38 4 * 10-12 1-5'
   workflow_dispatch:
 
 jobs:
